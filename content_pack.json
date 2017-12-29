@@ -1,0 +1,307 @@
+{
+  "name": "Microsoft Azure Log Integration",
+  "description": "Input, stream and dashboard to help handle logs received via Microsoft's Azure Log Integration",
+  "category": "Cloud",
+  "inputs": [
+    {
+      "id": "5a3c95075242372abb89a425",
+      "title": "Azure-Log-Integration",
+      "configuration": {
+        "recv_buffer_size": 1048576,
+        "tcp_keepalive": true,
+        "use_null_delimiter": true,
+        "tls_client_auth_cert_file": "",
+        "bind_address": "0.0.0.0",
+        "tls_cert_file": "",
+        "decompress_size_limit": 8388608,
+        "port": 24000,
+        "tls_key_file": "",
+        "tls_enable": false,
+        "tls_key_password": "",
+        "max_message_size": 2097152,
+        "tls_client_auth": "disabled",
+        "override_source": null
+      },
+      "static_fields": {
+
+      },
+      "type": "org.graylog2.inputs.gelf.tcp.GELFTCPInput",
+      "global": true,
+      "extractors": [
+        {
+          "title": "Azure-Log-JSON-ActiveType",
+          "type": "JSON",
+          "cursor_strategy": "COPY",
+          "target_field": "",
+          "source_field": "full_message",
+          "configuration": {
+            "flatten": false,
+            "list_separator": ", ",
+            "kv_separator": "=",
+            "key_prefix": "azure_",
+            "key_separator": "_",
+            "replace_key_whitespace": true,
+            "key_whitespace_replacement": "_"
+          },
+          "converters": [
+
+          ],
+          "condition_type": "STRING",
+          "condition_value": "activityType",
+          "order": 0
+        }
+      ]
+    }
+  ],
+  "streams": [
+    {
+      "id": "5a3c9f575242372abb89af61",
+      "title": "Azure Logs",
+      "description": "All Microsoft Azure Events",
+      "disabled": false,
+      "matching_type": "AND",
+      "stream_rules": [
+        {
+          "type": "PRESENCE",
+          "field": "azure_id",
+          "value": "",
+          "inverted": false,
+          "description": ""
+        }
+      ],
+      "outputs": [
+
+      ],
+      "default_stream": false
+    }
+  ],
+  "outputs": [
+
+  ],
+  "dashboards": [
+    {
+      "title": "Microsoft Azure Overview",
+      "description": "Overview of activity occurring within Microsoft Azure",
+      "dashboard_widgets": [
+        {
+          "description": "Activity",
+          "type": "SEARCH_RESULT_CHART",
+          "cache_time": 10,
+          "configuration": {
+            "interval": "day",
+            "timerange": {
+              "type": "relative",
+              "range": 604800
+            },
+            "query": "_exists_:azure_id"
+          },
+          "col": 2,
+          "row": 1,
+          "height": 1,
+          "width": 2
+        },
+        {
+          "description": "Activity Types",
+          "type": "QUICKVALUES",
+          "cache_time": 10,
+          "configuration": {
+            "timerange": {
+              "type": "relative",
+              "range": 604800
+            },
+            "field": "azure_activity",
+            "show_pie_chart": false,
+            "query": "_exists_:azure_id",
+            "show_data_table": true
+          },
+          "col": 1,
+          "row": 4,
+          "height": 3,
+          "width": 1
+        },
+        {
+          "description": "Operation Types",
+          "type": "QUICKVALUES",
+          "cache_time": 10,
+          "configuration": {
+            "timerange": {
+              "type": "relative",
+              "range": 604800
+            },
+            "field": "azure_activityOperationType",
+            "show_pie_chart": true,
+            "query": "_exists_:azure_id",
+            "show_data_table": true
+          },
+          "col": 4,
+          "row": 4,
+          "height": 3,
+          "width": 1
+        },
+        {
+          "description": "Top Activity Types",
+          "type": "QUICKVALUES",
+          "cache_time": 10,
+          "configuration": {
+            "timerange": {
+              "type": "relative",
+              "range": 604800
+            },
+            "field": "azure_activityType",
+            "show_pie_chart": false,
+            "query": "_exists_:azure_id",
+            "show_data_table": true
+          },
+          "col": 1,
+          "row": 2,
+          "height": 2,
+          "width": 1
+        },
+        {
+          "description": "Top Actor Names",
+          "type": "QUICKVALUES",
+          "cache_time": 10,
+          "configuration": {
+            "timerange": {
+              "type": "relative",
+              "range": 604800
+            },
+            "field": "azure_actor_name",
+            "show_pie_chart": false,
+            "query": "_exists_:azure_id",
+            "show_data_table": true
+          },
+          "col": 3,
+          "row": 2,
+          "height": 2,
+          "width": 1
+        },
+        {
+          "description": "Top User Principal Names",
+          "type": "QUICKVALUES",
+          "cache_time": 10,
+          "configuration": {
+            "timerange": {
+              "type": "relative",
+              "range": 604800
+            },
+            "field": "azure_actor_userPrincipalName",
+            "show_pie_chart": false,
+            "query": "_exists_:azure_id",
+            "show_data_table": true
+          },
+          "col": 2,
+          "row": 2,
+          "height": 2,
+          "width": 1
+        },
+        {
+          "description": "Top Actor Types",
+          "type": "QUICKVALUES",
+          "cache_time": 10,
+          "configuration": {
+            "timerange": {
+              "type": "relative",
+              "range": 604800
+            },
+            "field": "azure_actorType",
+            "show_pie_chart": false,
+            "query": "_exists_:azure_id",
+            "show_data_table": true
+          },
+          "col": 4,
+          "row": 2,
+          "height": 2,
+          "width": 1
+        },
+        {
+          "description": "Top Categories",
+          "type": "QUICKVALUES",
+          "cache_time": 10,
+          "configuration": {
+            "timerange": {
+              "type": "relative",
+              "range": 604800
+            },
+            "field": "azure_category",
+            "show_pie_chart": false,
+            "query": "_exists_:azure_id",
+            "show_data_table": true
+          },
+          "col": 3,
+          "row": 4,
+          "height": 2,
+          "width": 1
+        },
+        {
+          "description": "Total Events",
+          "type": "SEARCH_RESULT_COUNT",
+          "cache_time": 10,
+          "configuration": {
+            "timerange": {
+              "type": "relative",
+              "range": 604800
+            },
+            "lower_is_better": false,
+            "trend": true,
+            "query": "_exists_:azure_id"
+          },
+          "col": 1,
+          "row": 1,
+          "height": 1,
+          "width": 1
+        },
+        {
+          "description": "Activity Result Breakdown",
+          "type": "QUICKVALUES",
+          "cache_time": 10,
+          "configuration": {
+            "timerange": {
+              "type": "relative",
+              "range": 604800
+            },
+            "field": "azure_activityResultStatus",
+            "show_pie_chart": false,
+            "query": "_exists_:azure_id",
+            "show_data_table": true
+          },
+          "col": 4,
+          "row": 1,
+          "height": 1,
+          "width": 1
+        },
+        {
+          "description": "Logs by Source Module",
+          "type": "QUICKVALUES",
+          "cache_time": 10,
+          "configuration": {
+            "timerange": {
+              "type": "relative",
+              "range": 604800
+            },
+            "field": "SourceModuleName",
+            "show_pie_chart": false,
+            "query": "_exists_:azure_id",
+            "show_data_table": true
+          },
+          "col": 2,
+          "row": 4,
+          "height": 2,
+          "width": 1
+        }
+      ]
+    }
+  ],
+  "grok_patterns": [
+
+  ],
+  "lookup_tables": [
+
+  ],
+  "lookup_caches": [
+
+  ],
+  "lookup_data_adapters": [
+
+  ]
+}
